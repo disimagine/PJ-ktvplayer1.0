@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="swfobject.js"></script>
+<script type="text/javascript" src="../main.js"></script>
+<style type="text/css">
+    #mylist{
+        background-color: #FF0;
+        height:200px;
+    }
+</style>
+<div id="mylist"></div>
+<div id="ytapiplayer">
+    You need Flash player 8+ and JavaScript enabled to view this video.
+</div>
+
+<button onclick="play()">Play Video</button>
+<button onclick="next()">Next Video</button>
+<button onclick="get()">Get Data</button>
+
+<script type="text/javascript">
+    var ytplayer;
+    function onYouTubePlayerReady(playerId) {
+        ytplayer = document.getElementById("myytplayer");
+        console.log("Youtube Player loaded.");
+        console.log("ytplayer:"+ytplayer);
+    }
+
+    function play() {
+        if (ytplayer) {
+            ytplayer.playVideo();
+        }
+    }
+    function next(){
+        if(ytplayer){
+            console.log("ytplayerXD:"+ytplayer);
+            ytplayer.loadVideoById("WiEQnse-jPA");// replace 'cue' by 'load'
+        }
+    }
+    var params = { allowScriptAccess: "always" };
+    var atts = { id: "myytplayer" };
+    var swfUrl = 'http://www.youtube.com/apiplayer?enablejsapi=1&version=3';
+
+
+    var flashvars = {};
+    swfobject.embedSWF(swfUrl, "ytapiplayer", "720", "405", "9", null,
+            flashvars, params, atts);
+
+    //Ajax, Asynchronous JavaScript and XML（非同步的JavaScript與XML技術）
+    function get(){
+        var value = $("#testinput").val();
+        $.get("./getname?haha="+value,function(data){
+            console.log(data);
+            console.log(data.id)
+        });//without "json" ,
+
+        // $.get("./createaccount?haha="+value,function(data){
+        //     console.log(data);
+        //     console.log(data.id)
+        // },"json");
+        $('.playlist ul:nth-child(2)').append('<li>song</li>');
+
+    };
+
+
+</script>
+<input type="text" id="testinput" >
+</body>
+</html>
+
+https://disqus.com/profile/signup/?next=https%3A%2F%2Fdisqus.com%2Fhome%2F
+https://disqus.com/profile/login/?next=https%3A%2F%2Fdisqus.com%2Fhome%2F

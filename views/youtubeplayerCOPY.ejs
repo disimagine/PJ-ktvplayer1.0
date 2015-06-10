@@ -1,0 +1,274 @@
+
+<html>
+<head>
+	<title><%= title %></title>
+	<!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>  //for JS version of API -->
+	 <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+	 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+	<!--<link rel="stylesheet" type="text/css" href="css/room.css">-->
+
+</head>
+
+
+<body>
+	<!-- set socket-->
+	<!--5/7我先把socket.io.js拿掉==-->
+	<!--<script src="/socket.io/socket.io.js"></script>--><!--QQQQQQ-->
+	<script>
+
+	  //var socket = io();
+	  $(document).ready(function(){
+	  	
+	  	
+
+	  	//to do something
+	  	console.log('start to listen ...');
+	  	$('form[id=add]').submit(function(){
+	  			/* 1.use Ajax ./addsong:
+	  			 * 	to update the songlist database for new users coming into 
+	  			 *  the room later to construct the songlist.
+	  			 * 2.use socket.emit:
+	  			 * 	the users already in the room, NOT getting updated songlist from database.
+	  			 * 	information of the added song will emitted to server,
+	  			 *	and then the server will broadcast the instrction to all users to update their songlist. 
+	  			 *	 
+	  			 */
+	  			 console.log('Into form[id=add] ...');
+	  			 console.log('songID = '+$("#add_songID").val());
+	  			 var addSuccess; 
+	  			
+	  			$.get('./addsong?songID='+$("#add_songID").val(),function(){
+	  					console.log("addsong 45")
+			        	//console.log(data);//1:success; 0:fail QQQQQQQ 如何驗證不存在QQ ; -1 :blank
+			        	//addSuccess=data;
+			    });
+
+			      $.get("./getname?haha=haha1321",function(){ //待刪
+			            console.log("51 no pending plz");
+			        });
+			    return false;
+
+			    /*先把socket.io隱藏5/20
+			    if (addSuccess!=1){
+			        		console.log("FAIL,so not proceed to do socket io");
+			        		return false;
+			    }
+
+			    //socket
+	  			var data_toserver = {
+	  				'action':'add',
+	  				'username':'Carol',
+	  				'songID':$("#add_songID").val(),
+	  				'songname':'Life is wonderful.'
+	  			}
+				*/
+	  			/*
+			    socket.emit('instr_toserver',data_toserver);
+			    */
+			    return false;//false:頁面不重新整理 for ex: 聊天室,true: 頁面清空(重新整理) for ex:註冊會員
+			    
+			    
+
+			//socket end
+	  	});
+
+
+/*
+	  	socket.on('instr_toclient',function(data_fromserver){
+
+	  		$('.playlist ul:nth-child(3)').append('<li>'+data_fromserver.songname+'</li>');
+
+	  		//QQQQQQQQQQQQQQQQ改成加入歌曲名稱
+	  	});
+
+*/
+	  });
+	</script>
+	<!-- set socket finished-->
+
+
+	<div class="content-inner">
+		
+		<!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
+	<!-- 5/7
+	   <div class="player">
+			<div id ="myiframeplayer">Unabled to view this video.</div>
+		</div>
+	-->    
+<!--5/7
+	    <script>
+	      // 2. This code loads the IFrame Player API code asynchronously.
+	      var tag = document.createElement('script');
+
+	      tag.src = "https://www.youtube.com/iframe_api";
+	      var firstScriptTag = document.getElementsByTagName('script')[0];
+	      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+	      // 3. This function creates an <iframe> (and YouTube player)
+	      //    after the API code downloads.
+	      var player;
+	      function onYouTubeIframeAPIReady() {
+	        player = new YT.Player('myiframeplayer', {
+	          height: '100%',//相對於外層div(player)之大小
+	          width: '100%',
+	          videoId: 'mRF1Tsn-T08',
+	          events: {
+	            'onReady': onPlayerReady,//如果onReady的話 呼叫onPlayerReady()
+	            'onStateChange': onPlayerStateChange
+	          }
+	        });
+	      }
+
+	      // 4. The API will call this function when the video player is ready.
+	      function onPlayerReady(event) {
+	        event.target.playVideo();
+	        //player.playVideo();//亦可達到上行效果
+	        console.log("Now status is :"+event.data);
+
+	      }
+
+	      // 5. The API calls this function when the player's state changes.
+	      //    The function indicates that when playing a video (state=1),
+	      //    the player should play for six seconds and then stop.
+	      var done = false;
+	      function onPlayerStateChange(event) {
+	        if (event.data == YT.PlayerState.PLAYING && !done) {
+	        	console.log(event.data);
+	          setTimeout(stopVideo, 6000);
+	          done = true;
+	        }
+	      }
+	      function stopVideo() {
+	        player.stopVideo();
+	      }
+	    </script>
+	-->
+
+		
+<!-- 	<div  class="player" id="ytapiplayer">    //不能這樣打 這整坨會變成<object id="myytplayer，導致css控制不到.player
+		    	You need Flash player 8+ and JavaScript enabled to view this video.
+		</div> -->
+<!-- JavaScript API不能用了...窘-->
+		<div class="player">
+			<div id ="ytapiplayer">Unabled to view this video.</div>
+		</div>
+		
+		<script type="text/javascript">
+			var ytplayer;
+
+			function onYouTubePlayerReady(playerId) {
+				ytplayer = document.getElementById("myytplayer");
+				/*produce <object id="myytplayer"*/
+				/*object HTMLDivElement*/
+				console.log("Youtube Player loaded.");
+				}
+			var params = { allowScriptAccess: "always" };
+			var atts = { id: "myytplayer" };
+			var swfUrl = "http://www.youtube.com/v/-sPAyVSAJZM?enablejsapi=1&playerapiid=ytplayer&version=3";
+			var swfUrl2 ="http://www.youtube.com/apiplayer?enablejsapi=1&version=3";
+			//http://www.youtube.com/apiplayer?enablejsapi=1&version=3
+			swfobject.embedSWF(swfUrl2,"ytapiplayer", "100%", "100%", "8", null, null, params, atts);
+			//100%相對於外層之div
+			console.log(ytplayer+"QQ");
+			if(ytplayer){
+            	ytplayer.loadVideoById("-sPAyVSAJZM");// replace 'cue' by 'load'
+            	console.log("here");
+        	}
+
+  		</script>
+		
+<!--以上不能用了-->
+
+<!-- 21321-->
+	</div>
+
+	
+
+	
+
+	<!--把content-head寫在最下面，才能使其fixed於其他東西上面-->
+	<!--一層一層疊上去的感覺-->	
+	<div class="content-head">
+		<h2>Welcome~~ <strong><%= user.username %></strong></h2><!--6/2-->
+		<div id="green-elem">
+			<form id="add" action="">
+				Song ID <input id="add_songID" ><br>
+				<!-- <button onclick="add()">add a song</button>-->
+				<button >add a song(revised)</button>
+			</form>
+			<!--<form id="delete" action="">-->
+				Song ID <input id="del_songID" ><br>
+				<button onclick="deletesong()">delete a song</button>
+				<!--<button>delete a song(revised)</button>-->
+			<!--</form>-->
+			<script type="text/javascript">
+			    function add(){
+
+			        $.get("./getname?haha=haha1321",function(data){ //待刪
+			            console.log(data);
+			        });
+			        $.get("./addsong?songID="+$("#add_songID").val(),function(data){
+
+			        	console.log(data);//1:success; 0:fail QQQQQQQ 如何驗證不存在QQ ; -1 :blank
+			        });
+			        //$('.playlist ul:nth-child(3)').append('<li>'+$("#songID").val()+'</li>');//QQQQQQQQQQQQQQQQ改成加入歌曲名稱
+    			}
+
+    			function deletesong(){
+    				$.get("./deletesong?songID="+$("#del_songID").val(),function(data){
+    					console.log($("#del_songID").val());
+			        	console.log(data);//1:success; 0:fail  ; -1 :blank
+			        	//QQQQQ把歌從歌單拿掉 :
+
+			        });
+    			}
+			</script>
+		</div>
+
+
+
+
+
+		<div id="white-elem">
+			<ul class="navigation">
+				<li class="playlist">
+					<a href="#">playlist</a>
+					<ul><li>lock333</li></ul>
+					<ul>
+						<li>song.1</li>
+						<li>song.2</li>
+						<li>song.3</li>
+						<li>song.1</li>
+						<li>song.2</li>
+						<li>song.3</li>
+
+					</ul>
+					
+				</li>
+				
+				<li class="online">online
+					<ul></ul>
+				</li>
+
+				<li class="search">search
+				<ul><!--搜尋框加在這-->
+				</ul>
+				</li>
+				
+				<div class="playlist">
+				<!--do something-->
+				</div>
+
+				<div class="chat">
+				<!--do something-->
+				</div>
+			</ul>
+		</div>
+	</div>	
+	<div class="content-footer"></div>
+</body>
+<footer></footer>
+
+
+</html>

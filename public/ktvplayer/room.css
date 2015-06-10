@@ -1,0 +1,61 @@
+@charset "utf-8";
+@import "reset.css";
+
+/* green   #5cb85c  ....*/
+
+.top {
+	background: #FFD017;
+	height: 100px;
+	width: 100%;
+	top:0px;
+	position: fixed;
+	
+}
+.image{
+	float:left;
+	height:100%;
+	background: #000000;
+	width:25%;
+	text-align: center;
+	color:white;
+
+}
+.search{
+	float:left;
+	width:50%;
+}
+.right{
+	/*position: relative;*/
+	right:0px;
+	top:0px;
+	height: 100px;
+	width: 100px;
+}
+.right-item1,.right-item2{
+	float:right;
+	background: #00DF00;
+	height:20px;
+	width:100px;
+	color:white;
+
+}
+
+
+.container{
+	margin-top:100px;
+	height: 3000px;
+	width:100%;
+	background: white;
+
+}
+.footer{
+	background:#FFD017;
+	height:50px;
+	width:100%;
+	color:white;
+	position: fixed;
+	bottom:0px;
+	left:0px;
+	text-align: center;
+	vertical-align: 50%;
+}

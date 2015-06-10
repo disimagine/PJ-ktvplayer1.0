@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      var socket = io();
+
+      $(document).ready(function(){
+        $('form').submit(function(){
+            socket.emit('chat_message_toserver', { "msg" :$('#m').val(), "name": username  });
+            $('#m').val('');
+            return false;
+        });
+        socket.on('chat_message_toclient', function(resp){
+          var $li = $('<li>').text(resp.name+": "+ resp.msg);
+	  if (resp.name==username)
+	      $li.css("color","red");
+          $('#messages').append($li);
+        });
+
+        socket.on('keyboardstatus_toclient', function(resp){
+	  console.log(resp)
+	  if (resp.name!=username){
+		if (resp["status"]=="down"){
+		    if ($("#status_"+resp.name).size()==0){
+			var $div = $("<span>").attr("id","status_"+resp.name).text(resp.name + " is inserting words.");
+			$("#statusbar").html($div);
+		    }
+		}else if (resp["status"]=="up"){
+	     		clearTimeout(lagup)
+	     		lagup = setTimeout(function(){
+			   $("#status_"+resp.name).remove()
+	     		},600);
+		}
+	  }
+
+        });
+        $("#m").keydown(function(){
+             socket.emit('keyboardstatus_toserver', { "name": username, "status":"down"  });
+        });
+	var lagup = null;
+        $("#m").keyup(function(){
+                socket.emit('keyboardstatus_toserver', { "name": username, "status":"up"  });
+
+        });
+	
+	var username = prompt("Please enter your name?");
+      });
+    </script>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form action="">
+      <div id="statusbar" style="color:#DADADA;"></div>
+      <div><input id="m" autocomplete="off" /><button>Send</button></div>
+    </form>
+  </body>
+</html>

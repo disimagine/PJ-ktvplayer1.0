@@ -1,0 +1,163 @@
+@charset "utf-8";
+@import "reset.css";
+
+/* green   #5cb85c  ....*/
+
+body {
+	height: 70%;/*為何100%會爆@@.......*/
+	background-color: blue;
+}
+/*-------------------------------------------------------------------------top*/
+.content-head {
+	background: white;
+	height: 50px;
+	width: 100%;
+	top:0px;
+	position: fixed;
+
+
+}
+#white-elem {
+	background: white;
+	height:100px ;
+	border-bottom: black 1px;
+	box-shadow:0px 1px 1px 0px rgba(0,0,0,0.3);
+	
+}
+#green-elem {
+	height:40px;
+	background-color: #5cb85c;
+	box-shadow:0px 1px 1px 0px rgba(0,0,0,0.3);
+}
+
+/*--------------------------------------------------list initialization*/
+ul.navigation, ul.navigation li, ul.navigation ul, a{
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+}
+ul.navigation,ul.navigation li {
+    list-style: none;
+}
+/*--------------------------------------------------list initialization   END */
+
+
+/*第一層li*/
+ul.navigation >li{
+	top:30px;
+	display: block;
+	font-size: 20px;
+	font-weight: bold;
+	font-family:Arial;
+
+	color: #999999;
+	
+	
+}
+
+ul.navigation >li>a{
+	color: #999999;
+	padding: 12px 10px;
+	background-color: white;
+}
+
+ul.navigation >li>a:hover{
+	border-bottom:2px solid  #5cb85c;
+	color: #5cb85c;
+	text-shadow: 0px 1px 1px rgba(0,0,0,0.3);
+}
+ul.navigation ul li{
+	border-top: solid 1px #999999;
+	padding: 10px 12px;
+}
+ul.navigation ul li:first-child{
+	border-top: none;
+	padding: 10px 12px;
+}
+ul.navigation ul li:hover{
+	background-color: orange;
+}
+
+ul.navigation ul:nth-child(2) li:first-child{/*-------------playlist*/
+	top:-65px;
+
+	position: absolute;
+}
+.playlist{
+	float:left;
+	position: relative;
+	left:50px;
+}
+ul.navigation >li > ul{
+	display: none;/*none*/
+}
+ul.navigation >li:hover >ul{/*li:hover*/
+	display: block;
+	background-color: black;
+	position: relative;
+
+	left: 0px;
+	top: 75px;
+}
+.online{
+	float: right;
+	position: relative;
+	right: 50px;
+}
+.search{
+	float:right;
+	position: relative;
+	right:70px;
+}
+
+
+
+/*-----------------------------------------------------------------inner*/
+
+.content-inner {
+	position: ;
+	width: 100%;
+	height: 100px;/*暫定，純粹防止捲軸跑出*/
+	margin-top: 140px;
+	padding-top: 20px;
+	
+
+
+
+}
+
+
+.player {
+	position: relative;
+	width: 720px;
+	height: 405px;
+	top:0px;
+	left:50%;
+	margin-left: -360px;
+	background: yellow;
+
+}
+
+.player > #myytplayer{
+	position: relative;
+	margin-left:0px;
+
+	background: yellow;
+
+}
+
+.chat{
+
+}
+.content-footer{
+	position:fixed;
+	bottom: 0px;
+	height: 50px;
+	width:100%;
+	background-color: #5cb85c;
+	border-top: 1px red; 
+
+}
+
+
+/* green   #5cb85c  ....*/

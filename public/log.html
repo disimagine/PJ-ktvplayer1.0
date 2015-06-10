@@ -1,0 +1,99 @@
+<html>
+<head>
+    <title>Log and Register</title>
+</head>
+<body>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+
+<script type="text/javascript" src="../main.js"></script>
+<style type="text/css">
+    .log{
+        background-color: yellow;
+        height:200px;
+    }
+    .register{
+    	background-color: green;
+    	height:200px;
+    }
+</style>
+
+<div class="login" >
+	username:<input id="usernameL" ><br>
+	password:<input id="passwordL" ><br>
+	<button onclick="login()">Log In</button>
+</div>
+
+
+
+<div class="register">
+	username:<input id="usernameR" ><br>
+	password:<input id="passwordR" ><br>
+	<button class="registerBtn" onclick="register()">Sign Up</button>
+</div>
+
+<script type="text/javascript">
+    var login_fail_times = 0;
+    var register_fail = true;
+
+    function login(){
+            var usernameVal = $("#usernameL").val();//OK
+            var passwordVal = $("#passwordL").val();
+
+                     
+
+            $.get("./login?username="+usernameVal+"&password="+passwordVal,function(data){
+                console.log(data+"haha");//success:1,otherwise:0,-1
+                if (data=='1'){//OK
+                    $("div.login").append("<p>Log in successfully!!!網頁將於3秒後自動跳轉...</p>");
+                    setTimeout("location.href='./ktvplayer/youtubeplayer.html'",3000);
+                    //3000 ms 後執行location.href='./ktvplayer/youtubeplayer.html'
+                    //location.href為現在頁面
+                    
+                    
+
+                }
+                if(data=='-1')//blank
+                    $("div.login").append("<p class=\"failure\">Username or password cannot be blank</p>");
+                if(data=='0'){//須改成只出線一次
+                    if(login_fail_times==0){
+                        $("div.login").append("<p class=\"failure\">account not exist.PLEASE try again.</p>"); 
+                        //failure前後的""在這邊的地位just like 'text', instead of 'code',故需加上\
+                    }
+                    login_fail_times++;
+                    console.log("login_fail_times="+login_fail_times);
+                    //若失敗太多次，30分鐘後才可登入???.....QQQQQ
+                }
+            });
+    }
+
+    function register(){
+            var usernameVal = $("#usernameR").val();//OK
+            var passwordVal = $("#passwordR").val();
+            var first_fail = true;
+                     
+
+            $.get("./register?username="+usernameVal+"&password="+passwordVal,function(data){
+                console.log(data+"reXDD");//success:1,otherwise:0,-1
+                if (data=='1'){//OK
+                    $("div.register").append("<p>Sign up successfully!!!網頁將於3秒後自動跳轉...</p>");
+                    setTimeout("location.href='./ktvplayer/youtubeplayer.html'",3000);
+                    //3000 ms 後執行location.href='./ktvplayer/youtubeplayer.html'
+
+
+                }
+                if(data=='-1')//blank
+                    $("div.register").append("<p class=\"failure\">Username or password cannot be blank</p>");
+                if(data=='0'){
+                    if(register_fail==true){
+                        $("div.register").append("<p class=\"failure\">Username has been used.PLEASE try another.</p>");
+                        register_fail=false;
+                    }
+                
+                    console.log("register_fail="+register_fail);
+                }
+            });
+    }
+
+</script>
+</body>
+</html>
