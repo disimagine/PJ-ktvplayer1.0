@@ -24,6 +24,8 @@
 
 	  	//to do something
 	  	console.log('start to listen ...');
+
+	  	//add
 	  	$('form[id=add]').submit(function(){
 	  			/* 1.use Ajax ./addsong:
 	  			 * 	to update the songlist database for new users coming into 
@@ -83,6 +85,43 @@
 	  	});
 
 */
+
+
+		//delete
+		$('form[id=delete]').submit(function(){
+	  			/* 1.use Ajax ./deletesong:
+	  			 * 	to update the songlist database for new users coming into 
+	  			 *  the room later to construct the songlist.
+	  			 * 2.use socket.emit:
+	  			 * 	the users already in the room, NOT getting updated songlist from database.
+	  			 * 	information of the added song will emitted to server,
+	  			 *	and then the server will broadcast the instrction to all users to update their songlist. 
+	  			 *	 
+	  			 */
+	  			 console.log('Into form[id=delete] ...');
+	  			 console.log('songID = '+$("#del_songID").val());
+	  			 var delSuccess; 
+	  			
+	  			$.get('./deletesong?songID='+$("#del_songID").val(),function(data){
+	  					console.log("deletesong 104")
+			        	console.log("state: "+data);//1:success; 0:fail QQQQQQQ 如何驗證不存在QQ ; -1 :blank
+			        	//addSuccess=data;
+			    });
+
+
+			    return false;//false:頁面不重新整理 for ex: 聊天室,true: 頁面清空(重新整理) for ex:註冊會員
+			    
+			    
+
+			//socket 待補QQQQQ
+	  	});
+
+
+
+
+
+
+
 	  });
 	</script>
 	<!-- set socket finished-->
@@ -197,11 +236,11 @@
 				<!-- <button onclick="add()">add a song</button>-->
 				<button >add a song(revised)</button>
 			</form>
-			<!--<form id="delete" action="">-->
+			<form id="delete" action="">
 				Song ID <input id="del_songID" ><br>
-				<button onclick="deletesong()">delete a song</button>
-				<!--<button>delete a song(revised)</button>-->
-			<!--</form>-->
+				<!--<button onclick="deletesong()">delete a song</button>-->
+				<button>delete a song(revised)</button>
+			</form>
 			<script type="text/javascript">
 			    function add(){
 
