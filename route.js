@@ -32,7 +32,7 @@ var signIn = function(req, res, next) {
 // POST
 
 var signInPost = function(req, res, next) {
-   passport.authenticate('local', { successRedirect: '/',//----   /
+   passport.authenticate('local', { successRedirect: 'https://www.google.com.tw',//----   /
                                     //這裡可以跨網域轉址@@ redirect到google沒問題
                           failureRedirect: '/signin35'})(req, res, next);
 };
@@ -118,7 +118,7 @@ var getName = function(req, res){
       console.log("hI this is /getname function");
       //res.redirect('http://codetw.com/node-js-express1/');
 
-      res.redirect('/');//這裡不行跨網域轉址  WHY? (compared to line 35)
+      res.redirect('https://www.google.com.tw');//這裡不行跨網域轉址  WHY? (compared to line 35)
       /*
        counter++;
        var text = 'Hi~' + JSON.stringify(userids) + '.'; /*req.query.id*/

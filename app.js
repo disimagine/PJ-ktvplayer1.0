@@ -72,6 +72,85 @@ app.post('/signup', route.signUpPost);
 // GET
 app.get('/signout', route.signOut);
 
+app.get('/getname', route.getName);
+
+
+//4.
+ app.get('/addsong', function(req, res){
+      var songID = req.query.songID;
+      var result = '-1';
+      
+      
+      if (songID==""){//empty input
+         console.log('Fail to add new song! Song ID cannot be null.');
+         res.send(result);// send :-1
+         return;
+      }
+      console.log('now [data] is :'+data);//5/20
+      var data = {
+          SONG_ID: songID
+      }
+      console.log('2. now [dataSONG_ID] is :'+data.SONG_ID);//5/20
+      console.log('ready to insert....');
+      connection.query('INSERT INTO `songlist` SET ?', data, function(error){
+
+         
+             if(error){//username has been used.
+               result ='0';
+               res.send(result);//send: 0 
+                 console.log('寫入資料失敗！');
+                 //throw error;
+                 return;
+             }
+         
+          //insert successfully
+          result = '1';//success
+          console.log('SUCCESS! New song is added. ');
+          console.log('??req.query.songID = '+req.query.songID);//5/20
+          res.send(result);//send: 1 //5/20
+          return;
+          //res.send(result);
+
+      });
+});
+
+
+
+
+
+/********************************/
+
+/********************************/
+// 404 not found
+app.use(route.notFound404);
+
+var server = app.listen(app.get('port'), function(err) {
+   if(err) throw err;
+
+   var message = 'Server is running @ http://localhost:' + server.address().port;
+   console.log(message);
+});
+
+
+
+
+
+/////////////////////////////////////////////////////main.js
+
+//---------------------------------------------mysql
+//載入MySQL模組
+var mysql = require('mysql');
+//建立連線
+var connection = mysql.createConnection({
+    host: '127.0.0.1',
+    user: 'root',
+    password: 'admin',
+    database: 'cklab'
+});
+//開始連接
+connection.connect();
+//----------------------------------------------mysql prepared
+
 /*
 *  Ajax
 *  1./getname : get userids
@@ -82,6 +161,8 @@ app.get('/signout', route.signOut);
 */
 
 //1.
+var counter = 0;
+var userids = [];
 app.get('/getname', route.getName);
 
 //2.
@@ -136,7 +217,7 @@ app.get('/getname', route.getName);
 
  });
 
-//3.
+ //3.
  app.get('/login', function(req, res){
       // MSQL SELECT .....
       var result = '-1';
@@ -172,49 +253,7 @@ app.get('/getname', route.getName);
         //res.send(JSON.stringify({"status":"true"}));
      //res.send(JSON.stringify(userids));
  });
-
-
-
-//4.
- app.get('/addsong', function(req, res){
-      var songID = req.query.songID;
-      var result = '-1';
-      
-      
-      if (songID==""){//empty input
-         console.log('Fail to add new song! Song ID cannot be null.');
-         res.send(result);// send :-1
-         return;
-      }
-      console.log('now [data] is :'+data);//5/20
-      var data = {
-          SONG_ID: songID
-      }
-      console.log('---------------ready to insert---------------');
-      console.log('2. now [dataSONG_ID] is :'+data.SONG_ID);//5/20
-      
-      connection.query('INSERT INTO `songlist` SET ?', data, function(error){
-
-         
-             if(error){//username has been used.
-               result ='0';
-               res.send(result);//send: 0 
-                 console.log('寫入資料失敗！');
-                 //throw error;
-                 return;
-             }
-         
-          //insert successfully
-          result = '1';//success
-          console.log('SUCCESS! New song is added. ');
-          console.log('??req.query.songID = '+req.query.songID);//5/20
-          res.send(result);//send: 1 //5/20
-          return;
-          //res.send(result);
-
-      });
-});
-
+ 
 //5.
 app.get('/deletesong', function(req, res){
       var songID = req.query.songID;
@@ -228,7 +267,6 @@ app.get('/deletesong', function(req, res){
       var data ={
          SONG_ID : songID
       };
-      console.log('-----------start to delete song-----------');
       console.log('2. now [dataSONG_ID] is :'+data.SONG_ID);//5/20
       connection.query('DELETE from `songlist` where `SONG_ID` = ?', data.SONG_ID, function(err, fields) {  
             if (err){
@@ -246,43 +284,4 @@ app.get('/deletesong', function(req, res){
 
 });
 
-
-
-/********************************/
-
-/********************************/
-// 404 not found
-app.use(route.notFound404);//在此函數之後的app.get會失效，所以必須把app.get寫在前面  WHY/
-
-var server = app.listen(app.get('port'), function(err) {
-   if(err) throw err;
-
-   var message = 'Server is running @ http://localhost:' + server.address().port;
-   console.log(message);
-});
-
-
-
-
-
-/////////////////////////////////////////////////////main.js
-
-//---------------------------------------------mysql
-//載入MySQL模組
-var mysql = require('mysql');
-//建立連線
-var connection = mysql.createConnection({
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'admin',
-    database: 'cklab'
-});
-//開始連接
-connection.connect();
-//----------------------------------------------mysql prepared
-
-
- 
-
-
-console.log("app.js enddddd");
+console.log("enddddd");
