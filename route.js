@@ -16,6 +16,7 @@ var index = function(req, res, next) {
 
       if(user !== undefined) {
          user = user.toJSON();
+         //console.log('in route.js 19, [user] is :',user);
       }
       res.render('youtubeplayerCOPY', {title: 'Home', user: user});
    }
