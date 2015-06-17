@@ -16,6 +16,8 @@ var route = require('./route');
 var Model = require('./model');
 
 var app = express();
+var http = require('http').createServer(app);
+var io = require('socket.io')(http);
 
 passport.use(new LocalStrategy(function(username, password, done) {
    new Model.User({username: username}).fetch().then(function(data) {
@@ -254,7 +256,7 @@ app.get('/deletesong', function(req, res){
 // 404 not found
 app.use(route.notFound404);//在此函數之後的app.get會失效，所以必須把app.get寫在前面  WHY/
 
-var server = app.listen(app.get('port'), function(err) {
+var server = http.listen(app.get('port'), function(err) {
    if(err) throw err;
 
    var message = 'Server is running @ http://localhost:' + server.address().port;
@@ -280,6 +282,26 @@ var connection = mysql.createConnection({
 //開始連接
 connection.connect();
 //----------------------------------------------mysql prepared
+
+
+/********************************/
+/********************************/
+/* socket.io */
+io.on('connection', function(socket){
+    //console.log('content of para [socket] is:',socket);
+    socket.broadcast.emit('hi! broadcasting~');
+    console.log('a user connected');
+    //
+    socket.on('disconnect', function(){
+        console.log('user disconnected');
+      });
+      //
+      socket.on('instr_toserver',function(data_fromclient){
+        console.log('instruction:',data_fromclient.action);
+        socket.emit('instr_toclient',data_fromclient);
+      });
+      
+});
 
 
  
