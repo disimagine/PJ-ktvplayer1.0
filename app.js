@@ -249,6 +249,13 @@ app.get('/deletesong', function(req, res){
 });
 
 
+app.get('/nsp_socket',function(req,res){
+  console.log("server 253");
+  //namespaceSocket(req.query.nsp);
+  //return;
+  //res.send("haha");
+});
+
 
 /********************************/
 
@@ -280,31 +287,82 @@ var connection = mysql.createConnection({
     database: 'cklab'
 });
 //開始連接
-connection.connect();
+//connection.connect();此動作改到socket io 聽到connect event時才作
 //----------------------------------------------mysql prepared
 
 
 /********************************/
 /********************************/
 /* socket.io */
+//broadcast to EVERYONE
 io.on('connection', function(socket){
     //console.log('content of para [socket] is:',socket);
-    socket.broadcast.emit('hi! broadcasting~');
+    socket.broadcast.emit('hi! welcome to KAREOKE ONLINE~');
     console.log('a user connected');
     //
     socket.on('disconnect', function(){
         console.log('user disconnected');
       });
       //
-      socket.on('instr_toserver',function(data_fromclient){
+    socket.on('instr_toserver',function(data_fromclient){
         console.log('instruction:',data_fromclient.action);
         socket.emit('instr_toclient',data_fromclient);
-      });
+    });
       
 });
 
+//broadcast to custom namespaces
 
- 
+// TODO
+var my_namespace = 'ESOE';
+    var nsp = io.of('/'+my_namespace);
+    nsp.on('connection', function(socket){
+      nsp.emit('hi', 'enveryone!','here is', my_namespace);
+      console.log('someone connected into '+my_namespace);
+      nsp.on('disconnect',function(){
+        console.log('user in ',my_namespace,' disconnected');
+      });
+      nsp.on('instr_toserver',function(data_fromclient){
+        console.log('instruction:',data_fromclient.action);
+        socket.to(my_namespace).emit('instr_toclient',data_fromclient);
+      });
+
+    });
+
+var namespaceSocket = function(my_namespace){
+    var nsp = io.of('/'+my_namespace);
+    nsp.on('connection', function(socket){
+      nsp.emit('hi', 'enveryone!','here is', my_namespace);
+      console.log('someone connected into '+my_namespace);
+      nsp.on('disconnect',function(){
+        console.log('user in ',my_namespace,' disconnected');
+      });
+      nsp.on('instr_toserver',function(data_fromclient){
+        console.log('instruction:',data_fromclient.action);
+        socket.to(my_namespace).emit('instr_toclient',data_fromclient);
+      });
+
+    });
+    
+};
+
+/********************************/
+
+/* server closed*/
+//close server by CTRL+C
+
+
+process.on('SIGINT', function() {
+  console.log('start to close the server...');
+  server.close();
+});
+
+server.on('close',function(){
+  console.log(' Server is closed successfully.');
+  console.log('------>disconnect db connections.');
+  connection.end();
+  process.exit(0);
+});
 
 
 console.log("app.js enddddd");
