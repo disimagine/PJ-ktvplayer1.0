@@ -253,7 +253,9 @@ app.get('/nsp_socket',function(req,res){
   console.log("server 253");
   //namespaceSocket(req.query.nsp);
   //return;
-  //res.send("haha");
+  //沒有return 或res.send ,使此函數沒有"成功結束",
+  //client端不會執行Callback function
+  res.send("finished 258");
 });
 
 
@@ -316,30 +318,31 @@ io.on('connection', function(socket){
 // TODO
 var my_namespace = 'ESOE';
     var nsp = io.of('/'+my_namespace);
-    nsp.on('connection', function(socket){
-      nsp.emit('hi', 'enveryone!','here is', my_namespace);
-      console.log('someone connected into '+my_namespace);
-      nsp.on('disconnect',function(){
+    nsp.on('connection', function(nsp_socket){
+      nsp.emit('nsp', my_namespace);
+      console.log('someone connected into '+my_namespace);//已成功
+      nsp_socket.on('disconnect',function(){
         console.log('user in ',my_namespace,' disconnected');
       });
-      nsp.on('instr_toserver',function(data_fromclient){
+      nsp_socket.on('instr_toserver',function(data_fromclient){
+        console.log('---------nsp listen----------:');
         console.log('instruction:',data_fromclient.action);
-        socket.to(my_namespace).emit('instr_toclient',data_fromclient);
+        nsp.emit('instr_toclient',data_fromclient);
       });
 
     });
 
 var namespaceSocket = function(my_namespace){
     var nsp = io.of('/'+my_namespace);
-    nsp.on('connection', function(socket){
-      nsp.emit('hi', 'enveryone!','here is', my_namespace);
+    nsp.on('connection', function(nsp_socket){
+      nsp.emit('nsp', my_namespace);
       console.log('someone connected into '+my_namespace);
-      nsp.on('disconnect',function(){
+      nsp_socket.on('disconnect',function(){
         console.log('user in ',my_namespace,' disconnected');
       });
-      nsp.on('instr_toserver',function(data_fromclient){
+      nsp_socket.on('instr_toserver',function(data_fromclient){
         console.log('instruction:',data_fromclient.action);
-        socket.to(my_namespace).emit('instr_toclient',data_fromclient);
+        nsp.emit('instr_toclient',data_fromclient);
       });
 
     });
@@ -361,7 +364,7 @@ server.on('close',function(){
   console.log(' Server is closed successfully.');
   console.log('------>disconnect db connections.');
   connection.end();
-  process.exit(0);
+  process.exit(0);//不加這行的話cmd不會結束
 });
 
 
