@@ -17,13 +17,17 @@
 	<script src="/socket.io/socket.io.js"></script>
 	<script>
 	
-	
-	  var socket = io();
+	var UserwholeInfo = <%-JSON.stringify(user)%>;
+	  var namespace = "ESOE";
+	  $.get('./nsp_socket?nsp=ESOE',function(data){
+		  	console.log('----------------start nsp socket...');
+		  	console.log('msg from server: '+data );
+		});
+	  var socket = io.connect('http://localhost:3000/ESOE');
 	  $(document).ready(function(){
-	  	var username= $('Strong[id=username]').text();
-	  	//須等document.ready 之後才抓得到$('Strong[id=username]').text()
-	  	//所以不可把23行寫在$(document).ready()外面
-	  	console.log('WHO:',username);
+	  	var username= UserwholeInfo.username;
+	  	
+	  	//console.log('BIg WHO:',wholeUser);
 
 	  	//TODO something
 	  	console.log('start to listen ...');
@@ -64,6 +68,7 @@
 			  		}
 					
 		  			console.log('ready to emit()...');
+		  			
 				    socket.emit('instr_toserver',data_toserver);
 
 			    });
@@ -83,7 +88,7 @@
 	  	});
 
 
-
+		//socket listerning to server 
 	  	socket.on('instr_toclient',function(data_fromserver){
 
 	  		$('.playlist ul:nth-child(3)').append('<li>'+data_fromserver.songname+'</li>');
@@ -91,6 +96,10 @@
 
 	  		//QQQQQQQQQQQQQQQQ改成加入歌曲名稱
 	  	});
+	  	socket.on('here is',function(data_here){
+	  		console.log(data_here);
+	  	})
+
 
 
 
