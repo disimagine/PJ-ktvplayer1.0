@@ -251,9 +251,8 @@ app.get('/deletesong', function(req, res){
 
 app.get('/nsp_socket',function(req,res){
   console.log("server 253");
-  //namespaceSocket(req.query.nsp);
-  //return;
-  //沒有return 或res.send ,使此函數沒有"成功結束",
+  namespaceSocket(req.query.nsp);
+  //沒有或res.send ,使此函數沒有"成功結束",
   //client端不會執行Callback function
   res.send("finished 258");
 });
@@ -299,7 +298,7 @@ var connection = mysql.createConnection({
 //broadcast to EVERYONE
 io.on('connection', function(socket){
     //console.log('content of para [socket] is:',socket);
-    socket.broadcast.emit('hi! welcome to KAREOKE ONLINE~');
+    socket.broadcast.emit('to_everyone','hi! welcome to KAREOKE ONLINE~');
     console.log('a user connected');
     //
     socket.on('disconnect', function(){
@@ -315,32 +314,19 @@ io.on('connection', function(socket){
 
 //broadcast to custom namespaces
 
-// TODO
-var my_namespace = 'ESOE';
-    var nsp = io.of('/'+my_namespace);
-    nsp.on('connection', function(nsp_socket){
-      nsp.emit('nsp', my_namespace);
-      console.log('someone connected into '+my_namespace);//已成功
-      nsp_socket.on('disconnect',function(){
-        console.log('user in ',my_namespace,' disconnected');
-      });
-      nsp_socket.on('instr_toserver',function(data_fromclient){
-        console.log('---------nsp listen----------:');
-        console.log('instruction:',data_fromclient.action);
-        nsp.emit('instr_toclient',data_fromclient);
-      });
-
-    });
+//global var to keep all nsps
 
 var namespaceSocket = function(my_namespace){
     var nsp = io.of('/'+my_namespace);
     nsp.on('connection', function(nsp_socket){
+      console.log('content of para [nsp_socket] is:',nsp_socket);
       nsp.emit('nsp', my_namespace);
       console.log('someone connected into '+my_namespace);
       nsp_socket.on('disconnect',function(){
         console.log('user in ',my_namespace,' disconnected');
       });
       nsp_socket.on('instr_toserver',function(data_fromclient){
+        console.log('---------nsp in function is listening----------:');
         console.log('instruction:',data_fromclient.action);
         nsp.emit('instr_toclient',data_fromclient);
       });

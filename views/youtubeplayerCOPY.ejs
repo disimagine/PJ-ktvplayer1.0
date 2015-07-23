@@ -23,7 +23,9 @@
 		  	console.log('----------------start nsp socket...');
 		  	console.log('msg from server: '+data );
 		});
-	  var socket = io.connect('http://localhost:3000/ESOE');
+	  //var socket = io();
+	  //var socket = io.connect('http://localhost:3000/ESOE');
+	  var socket = io('http://127.0.0.1:3000/ESOE');//
 	  $(document).ready(function(){
 	  	var username= UserwholeInfo.username;
 	  	
@@ -96,9 +98,13 @@
 
 	  		//QQQQQQQQQQQQQQQQ改成加入歌曲名稱
 	  	});
-	  	socket.on('here is',function(data_here){
-	  		console.log(data_here);
-	  	})
+	  	socket.on('nsp',function(data_here){//已成功
+	  		console.log('user from:'+data_here);
+	  	});
+
+	  	socket.on('to_everyone',function(data_toeveryone){
+	  		console.log(data_toeveryone);
+	  	});
 
 
 
