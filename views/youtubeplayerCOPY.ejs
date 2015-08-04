@@ -18,14 +18,16 @@
 	<script>
 	
 	var UserwholeInfo = <%-JSON.stringify(user)%>;
-	  var namespace = "ESOE";
-	  $.get('./nsp_socket?nsp=ESOE',function(data){
+	//var namespace = "ESOE";
+	var namespace = prompt("Please enter your namespace?");
+
+	  $.get('./nsp_socket?nsp='+namespace,function(data){
 		  	console.log('----------------start nsp socket...');
 		  	console.log('msg from server: '+data );
 		});
 	  //var socket = io();
 	  //var socket = io.connect('http://localhost:3000/ESOE');
-	  var socket = io('http://127.0.0.1:3000/ESOE');//
+	  var socket = io('http://127.0.0.1:3000/'+namespace);//
 	  $(document).ready(function(){
 	  	var username= UserwholeInfo.username;
 	  	
@@ -104,6 +106,9 @@
 
 	  	socket.on('to_everyone',function(data_toeveryone){
 	  		console.log(data_toeveryone);
+	  	});
+	  	socket.on('a',function(haha){
+	  		console.log("haha:"+haha);
 	  	});
 
 
@@ -210,8 +215,11 @@
 		
 <!-- 	<div  class="player" id="ytapiplayer">    //不能這樣打 這整坨會變成<object id="myytplayer，導致css控制不到.player
 		    	You need Flash player 8+ and JavaScript enabled to view this video.
-		</div> -->
-<!-- JavaScript API不能用了...窘-->
+		</div> 
+
+
+
+<!-- JavaScript API不能用了...
 		<div class="player">
 			<div id ="ytapiplayer">Unabled to view this video.</div>
 		</div>
@@ -240,7 +248,7 @@
 
   		</script>
 		
-<!--以上不能用了-->
+以上不能用了-->
 
 <!-- 21321-->
 	</div>
@@ -252,7 +260,7 @@
 	<!--把content-head寫在最下面，才能使其fixed於其他東西上面-->
 	<!--一層一層疊上去的感覺-->	
 	<div class="content-head">
-		<h2>Welcome~~ <strong id="username"><%= user.username %></strong></h2><!--6/2-->
+		<h2>Welcome~~ <strong id="username"><%= user.username %></strong> </h2><!--6/2-->
 		<div id="green-elem">
 			<form id="add" action="">
 				Song ID <input id="add_songID" ><br>

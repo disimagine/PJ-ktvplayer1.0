@@ -251,8 +251,8 @@ app.get('/deletesong', function(req, res){
 
 app.get('/nsp_socket',function(req,res){
   console.log("server 253");
-  namespaceSocket(req.query.nsp);
-  //沒有或res.send ,使此函數沒有"成功結束",
+  createSocket(req.query.nsp);
+    //沒有或res.send ,使此函數沒有"成功結束",
   //client端不會執行Callback function
   res.send("finished 258");
 });
@@ -298,7 +298,8 @@ var connection = mysql.createConnection({
 //broadcast to EVERYONE
 io.on('connection', function(socket){
     //console.log('content of para [socket] is:',socket);
-    socket.broadcast.emit('to_everyone','hi! welcome to KAREOKE ONLINE~');
+    
+    socket.broadcast.emit('hi! welcome to KAREOKE ONLINE~');
     console.log('a user connected');
     //
     socket.on('disconnect', function(){
@@ -316,10 +317,30 @@ io.on('connection', function(socket){
 
 //global var to keep all nsps
 
+
+var nsps = [];
+var createSocket = function(my_namespace){
+
+    if (my_namespace!=''||my_namespace!=null){
+      var newNsp = "/"+my_namespace;
+      for(var key in nsps){
+        console.log("scanning.....:"+nsps[key]);
+        if (newNsp == nsps[key] ) {return "this newNsp already exists.";}
+      }
+      //newNsp is whole new to nsps[]
+      console.log("-----------329 to add new nsp");
+      nsps.push(newNsp);//add to nsps[]
+      console.log("----------nsps:"+nsps);
+      namespaceSocket(my_namespace);
+
+    }
+
+
+};
 var namespaceSocket = function(my_namespace){
     var nsp = io.of('/'+my_namespace);
     nsp.on('connection', function(nsp_socket){
-      console.log('content of para [nsp_socket] is:',nsp_socket);
+      //console.log('content of para [nsp_socket] is:',nsp_socket);
       nsp.emit('nsp', my_namespace);
       console.log('someone connected into '+my_namespace);
       nsp_socket.on('disconnect',function(){
@@ -330,10 +351,11 @@ var namespaceSocket = function(my_namespace){
         console.log('instruction:',data_fromclient.action);
         nsp.emit('instr_toclient',data_fromclient);
       });
-
+      
     });
     
 };
+
 
 /********************************/
 
@@ -343,15 +365,12 @@ var namespaceSocket = function(my_namespace){
 
 process.on('SIGINT', function() {
   console.log('start to close the server...');
-  server.close();
-});
-
-server.on('close',function(){
-  console.log(' Server is closed successfully.');
+  io.close();
   console.log('------>disconnect db connections.');
   connection.end();
   process.exit(0);//不加這行的話cmd不會結束
+  
+  return "Server is closed successfully.";
 });
-
 
 console.log("app.js enddddd");
