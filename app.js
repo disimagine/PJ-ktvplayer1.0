@@ -249,9 +249,12 @@ app.get('/deletesong', function(req, res){
 });
 
 
+
+
+
 app.get('/nsp_socket',function(req,res){
   console.log("server 253");
-  createSocket(req.query.nsp);
+  createSocket(req);
     //沒有或res.send ,使此函數沒有"成功結束",
   //client端不會執行Callback function
   res.send("finished 258");
@@ -319,32 +322,45 @@ io.on('connection', function(socket){
 
 
 var nsps = [];
-var createSocket = function(my_namespace){
+var createSocket = function(req){
+    var my_namespace  = req.query.nsp;
+    var hash_namespace = my_namespace;//QQQQQQ之後前端加密後送過來
+    var user = req.query.user;
 
     if (my_namespace!=''||my_namespace!=null){
       var newNsp = "/"+my_namespace;
       for(var key in nsps){
         console.log("scanning.....:"+nsps[key]);
-        if (newNsp == nsps[key] ) {return "this newNsp already exists.";}
+        if (newNsp == nsps[key] ) {
+          //房間內人數++
+          console.log("336-----------room user_count ++");
+          updateRoom(hash_namespace,true);
+          return "this newNsp already exists.";
+        }
       }
       //newNsp is whole new to nsps[]
+      //add this new nsp and insert into `room` table
       console.log("-----------329 to add new nsp");
       nsps.push(newNsp);//add to nsps[]
       console.log("----------nsps:"+nsps);
-      namespaceSocket(my_namespace);
+      namespaceSocket(hash_namespace);//使用加密的開起nsp
+      addroom(my_namespace,hash_namespace,user);
+      
+      
 
     }
 
 
 };
-var namespaceSocket = function(my_namespace){
-    var nsp = io.of('/'+my_namespace);
+var namespaceSocket = function(hash_namespace){
+    var nsp = io.of('/'+hash_namespace);
     nsp.on('connection', function(nsp_socket){
       //console.log('content of para [nsp_socket] is:',nsp_socket);
-      nsp.emit('nsp', my_namespace);
-      console.log('someone connected into '+my_namespace);
+      nsp.emit('nsp', hash_namespace);
+      console.log('someone connected into '+hash_namespace);
       nsp_socket.on('disconnect',function(){
-        console.log('user in ',my_namespace,' disconnected');
+        console.log('user in ',hash_namespace,' disconnected');
+        updateRoom(hash_namespace,false);//房間人數--
       });
       nsp_socket.on('instr_toserver',function(data_fromclient){
         console.log('---------nsp in function is listening----------:');
@@ -356,6 +372,97 @@ var namespaceSocket = function(my_namespace){
     
 };
 
+
+var addroom = function(my_namespace,hash_namespace,user){
+      var roomname = my_namespace;
+      var nsp = hash_namespace; 
+
+      var result = '-1';
+      
+      
+      if (roomname==""){//empty input
+         console.log('Fail to add new room! roomname cannot be null.');
+         console.log(error);
+         res.send(result);// send :-1
+         return;
+      }
+      
+      var data = {
+          'room_name' : roomname,
+          'room_nsp' : nsp,
+          'create_by' :　user
+      }
+      console.log('---------------ready to insert---------------');
+      console.log('2. now [data] is :'+JSON.stringify(data));//5/20
+      
+      connection.query('INSERT INTO `ktvroom` SET ?', data, function(error){
+
+         
+             if(error){//username has been used.
+               result ='0';
+               //res.send(result);//send: 0 
+                 console.log('寫入資料失敗！');
+                 console.log(error);
+                 //throw error;
+                 return;
+             }
+         
+          //insert successfully
+          result = '1';//success
+          console.log('SUCCESS! New room is added. ');
+          //res.send(result);//send: 1 //5/20
+          return;
+          //res.send(result);
+
+      });
+};
+
+var updateRoom = function(hash_namespace,connect){
+  var old_user_count ;
+  connection.query('SELECT `user_count` FROM `ktvroom` where `room_nsp` = ?', hash_namespace, function(error,rows,fields){
+      if(error){
+        console.log("updateRoom-SELECTing FAIL");
+        console.log(error);
+        return;
+      }
+      if(rows.length!=1){
+        console.log("nsp is duplicated. Please check it");
+        return;
+      }
+      for (var key in rows){
+        old_user_count = rows[key].user_count;
+        console.log("original user-count ..."+old_user_count);
+      }
+
+      //判定要加人或減人
+      var new_user_count ;
+      if(connect==true){//有人進來，人數++
+        //new_user_count = old_user_count++; wrong!
+        new_user_count = ++old_user_count;
+      }else{//有人離開 ,人數--
+        new_user_count = --old_user_count;
+      }
+      //start to updating
+      console.log("after updating,  new_user_count should be..."+new_user_count);
+      connection.query('UPDATE `ktvroom` SET `user_count` = ? where `room_nsp` = ?',[new_user_count,hash_namespace],function(error){
+          if (error){
+            console.log("updateRoom-UPDATEing FAIL");
+            console.log(error);
+            return;
+          }
+          console.log('SUCCESS! New user_count is updated. ');
+          return;
+      });
+  })
+};
+
+var deleteRoom =  function(){
+
+}
+
+var deletAllRoom = function(){
+  
+}
 
 /********************************/
 

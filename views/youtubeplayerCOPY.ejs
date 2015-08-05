@@ -21,16 +21,17 @@
 	//var namespace = "ESOE";
 	var namespace = prompt("Please enter your namespace?");
 
-	  $.get('./nsp_socket?nsp='+namespace,function(data){
-		  	console.log('----------------start nsp socket...');
-		  	console.log('msg from server: '+data );
-		});
+	  
 	  //var socket = io();
 	  //var socket = io.connect('http://localhost:3000/ESOE');
 	  var socket = io('http://127.0.0.1:3000/'+namespace);//
 	  $(document).ready(function(){
 	  	var username= UserwholeInfo.username;
 	  	
+	  	$.get('./nsp_socket?nsp='+namespace+'&user='+username,function(data){
+		  	console.log('----------------start nsp socket...');
+		  	console.log('msg from server: '+data );
+		});
 	  	//console.log('BIg WHO:',wholeUser);
 
 	  	//TODO something
@@ -68,7 +69,8 @@
 			  			'action':'add',
 			  			'username':username,
 			  			'songID':$("#add_songID").val(),
-			  			'songname':'Life is wonderful.'//QQQQQ
+			  			'songname':'Life is wonderful.'//
+			  			
 			  		}
 					
 		  			console.log('ready to emit()...');
